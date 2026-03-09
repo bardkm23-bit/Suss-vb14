@@ -569,6 +569,13 @@ var TALKS = [
 
 var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
+var COUNTDOWN_HTML = '<div class="countdown-row">' +
+  '<div class="cd-box"><span class="cd-number" id="cd-d">--</span><span class="cd-label">Days</span></div>' +
+  '<div class="cd-box"><span class="cd-number" id="cd-h">--</span><span class="cd-label">Hours</span></div>' +
+  '<div class="cd-box"><span class="cd-number" id="cd-m">--</span><span class="cd-label">Mins</span></div>' +
+  '<div class="cd-box"><span class="cd-number" id="cd-s">--</span><span class="cd-label">Secs</span></div>' +
+  '</div>';
+
 function sgt(date, time) {
   if (!date || !time) return new Date(0);
   var dp = date.split('-'), tp = time.split(':');
@@ -646,6 +653,11 @@ function updateHero() {
   if (labelEl) labelEl.textContent = 'Next Session';
   var diff = sgt(featured.date, featured.start) - new Date();
   if (diff <= 0) { updateHero(); updateCards(); return; }
+
+  // Restore countdown row HTML if it was replaced (e.g. after a live session ended)
+  if (!document.getElementById('cd-d')) {
+    cdEl.innerHTML = COUNTDOWN_HTML;
+  }
 
   var dd = document.getElementById('cd-d');
   var dh = document.getElementById('cd-h');
