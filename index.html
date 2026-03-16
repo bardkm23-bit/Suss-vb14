@@ -75,8 +75,8 @@ footer{text-align:center;padding:18px;font-size:11px;color:#94a3b8;border-top:1p
 </div>
 
 <div class="content">
-  <div class="sec-title">All Sessions</div>
-  <div id="sessionList">
+  <div class="sec-title">Active Sessions</div>
+  <div id="activeSessionList">
     <div class="session-card" data-date="2026-02-24" data-start="11:30" data-end="17:30">
       <div class="card-date">
         <span class="card-date-day">Tue</span>
@@ -522,6 +522,9 @@ footer{text-align:center;padding:18px;font-size:11px;color:#94a3b8;border-top:1p
       </div>
     </div>
   </div>
+
+  <div class="sec-title" style="margin-top:18px;">Past Sessions</div>
+  <div id="pastSessionList"></div>
 </div>
 
 <footer>SUSS VB14 &bull; Ngee Ann Polytechnic</footer>
@@ -595,25 +598,58 @@ function getStatus(t) {
 }
 
 function updateCards() {
-  var cards = document.querySelectorAll('.session-card');
+  var activeList = document.getElementById('activeSessionList');
+  var pastList   = document.getElementById('pastSessionList');
+  if (!activeList || !pastList) return;
+
+  // Use a static array because we'll be moving nodes between containers.
+  var cards = Array.prototype.slice.call(document.querySelectorAll('.session-card'));
+
+  // Sort by start time so Up Next is always the earliest upcoming
+  cards.sort(function(a, b) {
+    var as = sgt(a.getAttribute('data-date'), a.getAttribute('data-start')).getTime();
+    var bs = sgt(b.getAttribute('data-date'), b.getAttribute('data-start')).getTime();
+    return as - bs;
+  });
+
+  var now = new Date();
   var foundNext = false;
+
   for (var i = 0; i < cards.length; i++) {
     var c = cards[i];
     var s = sgt(c.getAttribute('data-date'), c.getAttribute('data-start'));
     var e = sgt(c.getAttribute('data-date'), c.getAttribute('data-end'));
-    var now = new Date();
     var tagEl = c.querySelector('.card-tag');
+
+    // reset
     c.classList.remove('past','next','live');
     if (tagEl) { tagEl.style.display = 'none'; tagEl.className = 'card-tag'; tagEl.textContent = ''; }
+
     if (now >= s && now <= e) {
+      // LIVE -> Active
+      activeList.appendChild(c);
       c.classList.add('live');
-      if (tagEl) { tagEl.style.display = 'inline-block'; tagEl.classList.add('tag-live'); tagEl.textContent = 'Live Now'; }
+      if (tagEl) {
+        tagEl.style.display = 'inline-block';
+        tagEl.classList.add('tag-live');
+        tagEl.textContent = 'Live Now';
+      }
     } else if (now > e) {
+      // PAST -> Past
+      pastList.appendChild(c);
       c.classList.add('past');
-    } else if (!foundNext) {
-      foundNext = true;
-      c.classList.add('next');
-      if (tagEl) { tagEl.style.display = 'inline-block'; tagEl.classList.add('tag-next'); tagEl.textContent = 'Up Next'; }
+    } else {
+      // UPCOMING -> Active
+      activeList.appendChild(c);
+      if (!foundNext) {
+        foundNext = true;
+        c.classList.add('next');
+        if (tagEl) {
+          tagEl.style.display = 'inline-block';
+          tagEl.classList.add('tag-next');
+          tagEl.textContent = 'Up Next';
+        }
+      }
     }
   }
 }
