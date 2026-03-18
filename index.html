@@ -1,13 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SUSS VB14 Sessions</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f3ee;color:#1a2640;min-height:100vh}
+header{background:#0a1628;padding:28px 20px 24px;text-align:center}
+.logo-line{font-size:11px;letter-spacing:4px;color:#c9a84c;text-transform:uppercase;margin-bottom:8px}
+h1{font-size:clamp(20px,5vw,34px);color:#fff;font-weight:700;line-height:1.2}
+h1 span{color:#c9a84c}
+.divider{width:50px;height:2px;background:#c9a84c;margin:12px auto 0}
+.hero{background:linear-gradient(135deg,#1a4a7a,#0a1628);padding:30px 20px;text-align:center}
+.hero-label{font-size:10px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:#c9a84c;margin-bottom:10px}
+.hero-title{font-size:clamp(15px,3.5vw,24px);color:#fff;margin-bottom:6px;line-height:1.35;padding:0 8px;font-weight:600}
+.hero-meta{font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:22px}
+.countdown-row{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.cd-box{background:rgba(255,255,255,0.09);border:1px solid rgba(201,168,76,0.35);border-radius:10px;padding:14px 16px 10px;min-width:68px;text-align:center}
+.cd-number{font-size:clamp(26px,7vw,46px);color:#f0d98a;line-height:1;display:block;font-weight:700}
+.cd-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-top:5px;display:block}
+.live-badge{display:inline-block;background:#16a34a;color:#fff;font-size:14px;font-weight:700;padding:10px 28px;border-radius:30px}
+.done-badge{display:inline-block;background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.45);font-size:13px;padding:8px 24px;border-radius:30px}
+.content{max-width:720px;margin:0 auto;padding:24px 14px 60px}
+.sec-title{font-size:18px;font-weight:700;color:#0a1628;margin-bottom:14px;padding-bottom:7px;border-bottom:2px solid #c9a84c;display:inline-block}
+.session-card{background:#fff;border-radius:10px;padding:16px;margin-bottom:9px;display:flex;gap:12px;align-items:flex-start;box-shadow:0 1px 3px rgba(0,0,0,0.07);border-left:4px solid #e2e8f0}
+.session-card.past{opacity:0.38;border-left-color:#e2e8f0}
+.session-card.next{border-left-color:#c9a84c;background:linear-gradient(to right,#fffbf0,#fff)}
+.session-card.live{border-left-color:#16a34a;background:linear-gradient(to right,#f0fdf4,#fff)}
+.card-date{flex:0 0 54px;text-align:center;background:#0a1628;border-radius:7px;padding:9px 5px;color:#fff}
+.session-card.past .card-date{background:#94a3b8}
+.session-card.next .card-date{background:#c9a84c;color:#0a1628}
+.session-card.live .card-date{background:#16a34a}
+.card-date-day{font-size:8px;text-transform:uppercase;letter-spacing:1px;opacity:0.7;display:block}
+.card-date-num{font-size:20px;line-height:1.1;display:block;font-weight:700}
+.card-date-month{font-size:9px;text-transform:uppercase;letter-spacing:1px;opacity:0.8;display:block}
+.card-body{flex:1;min-width:0}
+.card-tag{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:2px 8px;border-radius:20px;margin-bottom:5px;display:inline-block}
+.tag-next{background:#c9a84c;color:#0a1628}
+.tag-live{background:#16a34a;color:#fff}
+.card-title{font-size:14px;font-weight:600;line-height:1.4;margin-bottom:4px;color:#1a2640}
+.session-card.past .card-title{color:#64748b}
+.card-time{font-size:13px;color:#64748b}
+.card-time strong{color:#1a4a7a;font-weight:700}
+.session-card.past .card-time strong{color:#94a3b8}
+footer{text-align:center;padding:18px;font-size:11px;color:#94a3b8;border-top:1px solid #e2e8f0}
+@media(max-width:460px){
+  .session-card{flex-direction:column;gap:9px}
+  .card-date{flex:none;width:100%;display:flex;gap:10px;align-items:center;border-radius:7px;padding:9px 13px}
+  .card-date-num{font-size:18px}
+}
+</style>
+</head>
+<body>
 
+<header>
+  <div class="logo-line">SUSS Venture Builder Programme</div>
+  <h1>Cohort 14 <span>Session Schedule</span></h1>
+  <div class="divider"></div>
+</header>
+
+<div class="hero">
+  <div class="hero-label" id="heroLabel">Next Session</div>
+  <div class="hero-title" id="heroTitle">Calculating...</div>
+  <div class="hero-meta" id="heroMeta">&nbsp;</div>
+  <div id="heroCountdown">
+    <div class="countdown-row">
+      <div class="cd-box"><span class="cd-number" id="cd-d">--</span><span class="cd-label">Days</span></div>
+      <div class="cd-box"><span class="cd-number" id="cd-h">--</span><span class="cd-label">Hours</span></div>
+      <div class="cd-box"><span class="cd-number" id="cd-m">--</span><span class="cd-label">Mins</span></div>
+      <div class="cd-box"><span class="cd-number" id="cd-s">--</span><span class="cd-label">Secs</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+  <div class="sec-title">Active Sessions</div>
+  <div id="activeSessionList">
+    <div class="session-card" data-date="2026-02-24" data-start="11:30" data-end="17:30">
+      <div class="card-date">
+        <span class="card-date-day">Tue</span>
+        <span class="card-date-num">24</span>
+        <span class="card-date-month">Feb</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tag" style="display:none"></div>
+        <div class="card-title">SUSS Venture Builder Cohort 14 (VB14) Welcome and Onboarding</div>
+        <div class="card-time"><strong>11:30 - 17:30</strong></div>
+      </div>
+    </div>
+
+    <div class="session-card" data-date="2026-02-25" data-start="14:30" data-end="15:30">
+      <div class="card-date">
+        <span class="card-date-day">Wed</span>
+        <span class="card-date-num">25</span>
+        <span class="card-date-month">Feb</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tag" style="display:none"></div>
+        <div class="card-title">Week 1-3 Programme Highlights + AMA with VB Team</div>
+        <div class="card-time"><strong>14:30 - 15:30</strong></div>
+      </div>
+    </div>
+
+    <div class="session-card" data-date="2026-02-25" data-start="15:30" data-end="16:30">
+      <div class="card-date">
+        <span class="card-date-day">Wed</span>
+        <span class="card-date-num">25</span>
+        <span class="card-date-month">Feb</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tag" style="display:none"></div>
+        <div class="card-title">Introduction to the Social Sector and Social Innovation</div>
+        <div class="card-time"><strong>15:30 - 16:30</strong></div>
+      </div>
+    </div>
+
+    <div class="session-card" data-date="2026-02-26" data-start="13:30" data-end="17:30">
+      <div class="card-date">
+        <span class="card-date-day">Thu</span>
+        <span class="card-date-num">26</span>
+        <span class="card-date-month">Feb</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tag" style="display:none"></div>
+        <div class="card-title">Introduction to Social Entrepreneurship, Social Enterprise Model Canvas, and Theory of Change</div>
+        <div class="card-time"><strong>13:30 - 17:30</strong></div>
+      </div>
+    </div>
+
+    <div class="session-card" data-date="2026-03-03" data-start="14:30" data-end="17:30">
+      <div class="card-date">
+        <span class="card-date-day">Tue</span>
+        <span class="card-date-num">3</span>
+        <span class="card-date-month">Mar</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tag" style="display:none"></div>
+        <div class="card-title">Understanding and Balancing Business and Impact Fundamentals for Sustainable Growth</div>
+        <div class="card-time"><strong>14:30 - 17:30</strong></div>
+      </div>
+    </div>
+
+    <div class="session-card" data-date="2026-03-04" data-start="14:30" data-end="17:30">
+      <div class="card-date">
+        <span class="card-date-day">Wed</span>
+        <span class="card-date-num">4</span>
+        <span class="card-date-month">Mar</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tag" style="display:none"></div>
+        <div class="card-title">From Needs to Solutions: Designing for Market and Social Impact</div>
+        <div class="card-time"><strong>14:30 - 17:30</strong></div>
+      </div>
+    </div>
+
+    <div class="session-card" data-date="2026-03-05" data-start="16:00" data-end="17:30">
+      <div class="card-date">
+        <span class="card-date-day">Thu</span>
+        <span class="card-date-num">5</span>
+        <span class="card-date-month">Mar</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tag" style="display:none"></div>
+        <div class="card-title">AMA with Russ, Founder &amp; CEO, Social Collider</div>
+        <div class="card-time"><strong>16:00 - 17:30</strong></div>
+      </div>
+    </div>
+
+    <div class="session-card" data-date="2026-03-10" data-start="13:30" data-end="17:30">
+      <div class="card-date">
+        <span class="card-date-day">Tue</span>
+        <span class="card-date-num">10</span>
+        <span class="card-date-month">Mar</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tag" style="display:none"></div>
+        <div class="card-title">Introduction to Key Impact Frameworks: Setting, Measuring, and Tracking Your Impact</div>
+        <div class="card-time"><strong>13:30 - 17:30</strong></div>
+      </div>
+    </div>
+
+    <div class="session-card" data-date="2026-03-12" data-start="14:00" data-end="16:00">
+      <div class="card-date">
+        <span class="card-date-day">Thu</span>
+        <span class="card-date-num">12</span>
+        <span class="card-date-month">Mar</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tag" style="display:none"></div>
+        <div class="card-title">Sustainable Growth and Impact Communication for Impact-first Ventures</div>
+        <div class="card-time"><strong>14:00 - 16:00</strong></div>
+      </div>
+    </div>
+
+    <div class="session-card" data-date="2026-03-12" data-start="16:00" data-end="18:00">
+      <div class="card-date">
+        <span class="card-date-day">Thu</span>
+        <span class="card-date-num">12</span>
+        <span class="card-date-month">Mar</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tag" style="display:none"></div>
+        <div class="card-title">Building and Activating Communities for Social Impact</div>
+        <div class="card-time"><strong>16:00 - 18:00</strong></div>
+      </div>
+    </div>
+
+    <div class="session-card" data-date="2026-03-17" data-start="12:00" data-end="13:00">
+      <div class="card-date">
+        <span class="card-date-day">Tue</span>
+        <span class="card-date-num">17</span>
+        <span class="card-date-month">Mar</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tag" style="display:none"></div>
+        <div class="card-title">Week 4-6 Highlights + AMA with VB Team</div>
+        <div class="card-time"><strong>12:00 - 13:00</strong></div>
+      </div>
+    </div>
+
+    <div class="session-card" data-date="2026-03-17" data-start="13:00" data-end="15:30">
+      <div class="card-date">
+        <span class="card-date-day">Tue</span>
+        <span class="card-date-num">17</span>
+        <span class="card-date-month">Mar</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tag" style="display:none"></div>
+        <div class="card-title">Identifying and Engaging your Target Customers</div>
+        <div class="card-time"><strong>13:00 - 15:30</strong></div>
+      </div>
+    </div>
+
+    <div class="session-card" data-date="2026-03-17" data-start="15:30" data-end="17:30">
+      <div class="card-date">
+        <span class="card-date-day">Tue</span>
+        <span class="card-date-num">17</span>
+        <span class="card-date-month">Mar</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tag" style="display:none"></div>
+        <div class="card-title">Negotiation</div>
+        <div class="card-time"><strong>15:30 - 17:30</strong></div>
+      </div>
+    </div>
+
+    <div class="session-card" data-date="2026-03-19" data-start="14:30" data-end="15:30">
+      <div class="card-date">
+        <span class="card-date-day">Thu</span>
+        <span class="card-date-num">19</span>
+        <span class="card-date-month">Mar</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tag" style="display:none"></div>
+        <div class="card-title">AMA with Walter Tsui, Co-founder and CEO, CareER</div>
+        <div class="card-time"><strong>14:30 - 15:30</strong></div>
+      </div>
+    </div>
+
+    <!-- NEW SESSION CARD (2026-03-24 14:00-16:00) -->
     <div class="session-card" data-date="2026-03-24" data-start="14:00" data-end="16:00">
-        <h3>Driving Momentum Through User-Beneficiary-Centric Flywheels</h3>
+      <div class="card-date">
+        <span class="card-date-day">Tue</span>
+        <span class="card-date-num">24</span>
+        <span class="card-date-month">Mar</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tag" style="display:none"></div>
+        <div class="card-title">Driving Momentum Through User-Beneficiary-Centric Flywheels</div>
+        <div class="card-time"><strong>14:00 - 16:00</strong></div>
+      </div>
     </div>
 
-    <!-- Existing sessions -->
-    <div class="session-card" data-date="2026-03-19" data-start="10:00" data-end="12:00">
-        <h3>Existing Session</h3>
+    <div class="session-card" data-date="2026-03-24" data-start="16:00" data-end="17:30">
+      <div class="card-date">
+        <span class="card-date-day">Tue</span>
+        <span class="card-date-num">24</span>
+        <span class="card-date-month">Mar</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tag" style="display:none"></div>
+        <div class="card-title">AMA with Vanessa Hendriadi, CEO/Co-founder, GoWork</div>
+        <div class="card-time"><strong>16:00 - 17:30</strong></div>
+      </div>
     </div>
 
-    <div class="session-card" data-date="2026-03-24" data-start="16:00" data-end="18:00">
-        <h3>AMA with Vanessa Hendriadi</h3>
+    <div class="session-card" data-date="2026-03-26" data-start="13:30" data-end="17:30">
+      <div class="card-date">
+        <span class="card-date-day">Thu</span>
+        <span class="card-date-num">26</span>
+        <span class="card-date-month">Mar</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tag" style="display:none"></div>
+        <div class="card-title">Product-Market Fit and Sustainable Revenue Models for Impact Ventures</div>
+        <div class="card-time"><strong>13:30 - 17:30</strong></div>
+      </div>
     </div>
+
+    <div class="session-card" data-date="2026-03-31" data-start="13:30" data-end="15:30">
+      <div class="card-date">
+        <span class="card-date-day">Tue</span>
+        <span class="card-date-num">31</span>
+        <span class="card-date-month">Mar</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tag" style="display:none"></div>
+        <div class="card-title">Building your Brand and Storytelling</div>
+        <div class="card-time"><strong>13:30 - 15:30</strong></div>
+      </div>
+    </div>
+
+    <div class="session-card" data-date="2026-03-31" data-start="15:30" data-end="17:30">
+      <div class="card-date">
+        <span class="card-date-day">Tue</span>
+        <span class="card-date-num">31</span>
+        <span class="card-date-month">Mar</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tag" style="display:none"></div>
+        <div class="card-title">Go-to-Market and Getting to a Deal</div>
+        <div class="card-time"><strong>15:30 - 17:30</strong></div>
+      </div>
+    </div>
+
+    <div class="session-card" data-date="2026-04-01" data-start="13:30" data-end="17:30">
+      <div class="card-date">
+        <span class="card-date-day">Wed</span>
+        <span class="card-date-num">1</span>
+        <span class="card-date-month">Apr</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tag" style="display:none"></div>
+        <div class="card-title">Introduction to No-Code Solutions &amp; Landing Pages + AI Tools for Rapid Iteration</div>
+        <div class="card-time"><strong>13:30 - 17:30</strong></div>
+      </div>
+    </div>
+
+    <div class="session-card" data-date="2026-04-02" data-start="14:00" data-end="16:00">
+      <div class="card-date">
+        <span class="card-date-day">Thu</span>
+        <span class="card-date-num">2</span>
+        <span class="card-date-month">Apr</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tag" style="display:none"></div>
+        <div class="card-title">The Role of Research &amp; Validation in Building Impact Ventures</div>
+        <div class="card-time"><strong>14:00 - 16:00</strong></div>
+      </div>
+    </div>
+
+    <div class="session-card" data-date="2026-04-02" data-start="16:00" data-end="17:30">
+      <div class="card-date">
+        <span class="card-date-day">Thu</span>
+        <span class="card-date-num">2</span>
+        <span class="card-date-month">Apr</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tag" style="display:none"></div>
+        <div class="card-title">AMA with Dr Kelvin Tan, Head of Programme &amp; Senior Lecturer, SUSS</div>
+        <div class="card-time"><strong>16:00 - 17:30</strong></div>
+      </div>
+    </div>
+
+    <div class="session-card" data-date="2026-04-07" data-start="12:00" data-end="13:30">
+      <div class="card-date">
+        <span class="card-date-day">Tue</span>
+        <span class="card-date-num">7</span>
+        <span class="card-date-month">Apr</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tag" style="display:none"></div>
+        <div class="card-title">Lunch &amp; Check-In: Week 7-9 Highlights + AMA with VB Team</div>
+        <div class="card-time"><strong>12:00 - 13:30</strong></div>
+      </div>
+    </div>
+
+    <div class="session-card" data-date="2026-04-07" data-start="13:30" data-end="17:30">
+      <div class="card-date">
+        <span class="card-date-day">Tue</span>
+        <span class="card-date-num">7</span>
+        <span class="card-date-month">Apr</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tag" style="display:none"></div>
+        <div class="card-title">Introduction to UI/UX in Product Development</div>
+        <div class="card-time"><strong>13:30 - 17:30</strong></div>
+      </div>
+    </div>
+
+    <div class="session-card" data-date="2026-04-08" data-start="13:30" data-end="17:30">
+      <div class="card-date">
+        <span class="card-date-day">Wed</span>
+        <span class="card-date-num">8</span>
+        <span class="card-date-month">Apr</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tag" style="display:none"></div>
+        <div class="card-title">Rapid Prototyping &amp; MVP Development (Design Thinking, Lean Startup, Agile)</div>
+        <div class="card-time"><strong>13:30 - 17:30</strong></div>
+      </div>
+    </div>
+
+    <div class="session-card" data-date="2026-04-09" data-start="13:30" data-end="17:30">
+      <div class="card-date">
+        <span class="card-date-day">Thu</span>
+        <span class="card-date-num">9</span>
+        <span class="card-date-month">Apr</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tag" style="display:none"></div>
+        <div class="card-title">Pitch Deck Building and Delivery</div>
+        <div class="card-time"><strong>13:30 - 17:30</strong></div>
+      </div>
+    </div>
+
+    <div class="session-card" data-date="2026-04-14" data-start="10:00" data-end="13:00">
+      <div class="card-date">
+        <span class="card-date-day">Tue</span>
+        <span class="card-date-num">14</span>
+        <span class="card-date-month">Apr</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tag" style="display:none"></div>
+        <div class="card-title">Workshop - Financial Modelling: Revenue, Expenses, Cash Flow &amp; Valuation</div>
+        <div class="card-time"><strong>10:00 - 13:00</strong></div>
+      </div>
+    </div>
+
+    <div class="session-card" data-date="2026-04-14" data-start="14:00" data-end="17:30">
+      <div class="card-date">
+        <span class="card-date-day">Tue</span>
+        <span class="card-date-num">14</span>
+        <span class="card-date-month">Apr</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tag" style="display:none"></div>
+        <div class="card-title">Consultation - Financial Modelling: Revenue, Expenses, Cash Flow &amp; Valuation</div>
+        <div class="card-time"><strong>14:00 - 17:30</strong></div>
+      </div>
+    </div>
+
+    <div class="session-card" data-date="2026-04-16" data-start="13:30" data-end="15:30">
+      <div class="card-date">
+        <span class="card-date-day">Thu</span>
+        <span class="card-date-num">16</span>
+        <span class="card-date-month">Apr</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tag" style="display:none"></div>
+        <div class="card-title">Capital Stack for Impact-first Ventures</div>
+        <div class="card-time"><strong>13:30 - 15:30</strong></div>
+      </div>
+    </div>
+
+    <div class="session-card" data-date="2026-04-16" data-start="15:30" data-end="17:30">
+      <div class="card-date">
+        <span class="card-date-day">Thu</span>
+        <span class="card-date-num">16</span>
+        <span class="card-date-month">Apr</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tag" style="display:none"></div>
+        <div class="card-title">Types of Funding and How to Manage your Funders</div>
+        <div class="card-time"><strong>15:30 - 17:30</strong></div>
+      </div>
+    </div>
+
+    <div class="session-card" data-date="2026-04-21" data-start="13:30" data-end="15:30">
+      <div class="card-date">
+        <span class="card-date-day">Tue</span>
+        <span class="card-date-num">21</span>
+        <span class="card-date-month">Apr</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tag" style="display:none"></div>
+        <div class="card-title">Building the Dream Team: Co-Founders and Key Hires</div>
+        <div class="card-time"><strong>13:30 - 15:30</strong></div>
+      </div>
+    </div>
+
+    <div class="session-card" data-date="2026-04-21" data-start="15:30" data-end="17:30">
+      <div class="card-date">
+        <span class="card-date-day">Tue</span>
+        <span class="card-date-num">21</span>
+        <span class="card-date-month">Apr</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tag" style="display:none"></div>
+        <div class="card-title">Fractional Workforce for Optimised Operations</div>
+        <div class="card-time"><strong>15:30 - 17:30</strong></div>
+      </div>
+    </div>
+
+    <div class="session-card" data-date="2026-04-28" data-start="13:00" data-end="14:00">
+      <div class="card-date">
+        <span class="card-date-day">Tue</span>
+        <span class="card-date-num">28</span>
+        <span class="card-date-month">Apr</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tag" style="display:none"></div>
+        <div class="card-title">Week 10-12 Highlights + AMA with VB Team</div>
+        <div class="card-time"><strong>13:00 - 14:00</strong></div>
+      </div>
+    </div>
+
+    <div class="session-card" data-date="2026-04-30" data-start="13:00" data-end="17:30">
+      <div class="card-date">
+        <span class="card-date-day">Thu</span>
+        <span class="card-date-num">30</span>
+        <span class="card-date-month">Apr</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tag" style="display:none"></div>
+        <div class="card-title">Impact &amp; Startup Ecosystem Immersion</div>
+        <div class="card-time"><strong>13:00 - 17:30</strong></div>
+      </div>
+    </div>
+
+    <div class="session-card" data-date="2026-05-07" data-start="14:00" data-end="17:00">
+      <div class="card-date">
+        <span class="card-date-day">Thu</span>
+        <span class="card-date-num">7</span>
+        <span class="card-date-month">May</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tag" style="display:none"></div>
+        <div class="card-title">End of Programme Pitch</div>
+        <div class="card-time"><strong>14:00 - 17:00</strong></div>
+      </div>
+    </div>
+
+    <div class="session-card" data-date="2026-05-12" data-start="13:30" data-end="15:30">
+      <div class="card-date">
+        <span class="card-date-day">Tue</span>
+        <span class="card-date-num">12</span>
+        <span class="card-date-month">May</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tag" style="display:none"></div>
+        <div class="card-title">Incorporation and Accounting for Impact Ventures</div>
+        <div class="card-time"><strong>13:30 - 15:30</strong></div>
+      </div>
+    </div>
+
+    <div class="session-card" data-date="2026-05-12" data-start="15:30" data-end="17:30">
+      <div class="card-date">
+        <span class="card-date-day">Tue</span>
+        <span class="card-date-num">12</span>
+        <span class="card-date-month">May</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tag" style="display:none"></div>
+        <div class="card-title">Intellectual Property (IP) for Impact Ventures</div>
+        <div class="card-time"><strong>15:30 - 17:30</strong></div>
+      </div>
+    </div>
+
+    <div class="session-card" data-date="2026-05-13" data-start="14:00" data-end="16:00">
+      <div class="card-date">
+        <span class="card-date-day">Wed</span>
+        <span class="card-date-num">13</span>
+        <span class="card-date-month">May</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tag" style="display:none"></div>
+        <div class="card-title">What Happens Next: Information about SUSS Grants and Programmes</div>
+        <div class="card-time"><strong>14:00 - 16:00</strong></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="sec-title" style="margin-top:18px;">Past Sessions</div>
+  <div id="pastSessionList"></div>
+</div>
+
+<footer>SUSS VB14 &bull; Ngee Ann Polytechnic</footer>
+
+<script>
+var TALKS = [
+  {title:"SUSS Venture Builder Cohort 14 (VB14) Welcome and Onboarding",date:"2026-02-24",day:"Tuesday",start:"11:30",end:"17:30"},
+  {title:"Week 1-3 Programme Highlights + AMA with VB Team",date:"2026-02-25",day:"Wednesday",start:"14:30",end:"15:30"},
+  {title:"Introduction to the Social Sector and Social Innovation",date:"2026-02-25",day:"Wednesday",start:"15:30",end:"16:30"},
+  {title:"Introduction to Social Entrepreneurship, Social Enterprise Model Canvas, and Theory of Change",date:"2026-02-26",day:"Thursday",start:"13:30",end:"17:30"},
+  {title:"Understanding and Balancing Business and Impact Fundamentals for Sustainable Growth",date:"2026-03-03",day:"Tuesday",start:"14:30",end:"17:30"},
+  {title:"From Needs to Solutions: Designing for Market and Social Impact",date:"2026-03-04",day:"Wednesday",start:"14:30",end:"17:30"},
+  {title:"AMA with Russ, Founder & CEO, Social Collider",date:"2026-03-05",day:"Thursday",start:"16:00",end:"17:30"},
+  {title:"Introduction to Key Impact Frameworks: Setting, Measuring, and Tracking Your Impact",date:"2026-03-10",day:"Tuesday",start:"13:30",end:"17:30"},
+  {title:"Sustainable Growth and Impact Communication for Impact-first Ventures",date:"2026-03-12",day:"Thursday",start:"14:00",end:"16:00"},
+  {title:"Building and Activating Communities for Social Impact",date:"2026-03-12",day:"Thursday",start:"16:00",end:"18:00"},
+  {title:"Week 4-6 Highlights + AMA with VB Team",date:"2026-03-17",day:"Tuesday",start:"12:00",end:"13:00"},
+  {title:"Identifying and Engaging your Target Customers",date:"2026-03-17",day:"Tuesday",start:"13:00",end:"15:30"},
+  {title:"Negotiation",date:"2026-03-17",day:"Tuesday",start:"15:30",end:"17:30"},
+  {title:"AMA with Walter Tsui, Co-founder and CEO, CareER",date:"2026-03-19",day:"Thursday",start:"14:30",end:"15:30"},
+
+  // NEW TALK (2026-03-24 14:00-16:00)
+  {title:"Driving Momentum Through User-Beneficiary-Centric Flywheels",date:"2026-03-24",day:"Tuesday",start:"14:00",end:"16:00"},
+
+  {title:"AMA with Vanessa Hendriadi, CEO/Co-founder, GoWork",date:"2026-03-24",day:"Tuesday",start:"16:00",end:"17:30"},
+  {title:"Product-Market Fit and Sustainable Revenue Models for Impact Ventures",date:"2026-03-26",day:"Thursday",start:"13:30",end:"17:30"},
+  {title:"Building your Brand and Storytelling",date:"2026-03-31",day:"Tuesday",start:"13:30",end:"15:30"},
+  {title:"Go-to-Market and Getting to a Deal",date:"2026-03-31",day:"Tuesday",start:"15:30",end:"17:30"},
+  {title:"Introduction to No-Code Solutions & Landing Pages + AI Tools for Rapid Iteration",date:"2026-04-01",day:"Wednesday",start:"13:30",end:"17:30"},
+  {title:"The Role of Research & Validation in Building Impact Ventures",date:"2026-04-02",day:"Thursday",start:"14:00",end:"16:00"},
+  {title:"AMA with Dr Kelvin Tan, Head of Programme & Senior Lecturer, SUSS",date:"2026-04-02",day:"Thursday",start:"16:00",end:"17:30"},
+  {title:"Lunch & Check-In: Week 7-9 Highlights + AMA with VB Team",date:"2026-04-07",day:"Tuesday",start:"12:00",end:"13:30"},
+  {title:"Introduction to UI/UX in Product Development",date:"2026-04-07",day:"Tuesday",start:"13:30",end:"17:30"},
+  {title:"Rapid Prototyping & MVP Development (Design Thinking, Lean Startup, Agile)",date:"2026-04-08",day:"Wednesday",start:"13:30",end:"17:30"},
+  {title:"Pitch Deck Building and Delivery",date:"2026-04-09",day:"Thursday",start:"13:30",end:"17:30"},
+  {title:"Workshop - Financial Modelling: Revenue, Expenses, Cash Flow & Valuation",date:"2026-04-14",day:"Tuesday",start:"10:00",end:"13:00"},
+  {title:"Consultation - Financial Modelling: Revenue, Expenses, Cash Flow & Valuation",date:"2026-04-14",day:"Tuesday",start:"14:00",end:"17:30"},
+  {title:"Capital Stack for Impact-first Ventures",date:"2026-04-16",day:"Thursday",start:"13:30",end:"15:30"},
+  {title:"Types of Funding and How to Manage your Funders",date:"2026-04-16",day:"Thursday",start:"15:30",end:"17:30"},
+  {title:"Building the Dream Team: Co-Founders and Key Hires",date:"2026-04-21",day:"Tuesday",start:"13:30",end:"15:30"},
+  {title:"Fractional Workforce for Optimised Operations",date:"2026-04-21",day:"Tuesday",start:"15:30",end:"17:30"},
+  {title:"Week 10-12 Highlights + AMA with VB Team",date:"2026-04-28",day:"Tuesday",start:"13:00",end:"14:00"},
+  {title:"Impact & Startup Ecosystem Immersion",date:"2026-04-30",day:"Thursday",start:"13:00",end:"17:30"},
+  {title:"End of Programme Pitch",date:"2026-05-07",day:"Thursday",start:"14:00",end:"17:00"},
+  {title:"Incorporation and Accounting for Impact Ventures",date:"2026-05-12",day:"Tuesday",start:"13:30",end:"15:30"},
+  {title:"Intellectual Property (IP) for Impact Ventures",date:"2026-05-12",day:"Tuesday",start:"15:30",end:"17:30"},
+  {title:"What Happens Next: Information about SUSS Grants and Programmes",date:"2026-05-13",day:"Wednesday",start:"14:00",end:"16:00"}
+];
+
+var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+var COUNTDOWN_HTML = '<div class="countdown-row">' +
+  '<div class="cd-box"><span class="cd-number" id="cd-d">--</span><span class="cd-label">Days</span></div>' +
+  '<div class="cd-box"><span class="cd-number" id="cd-h">--</span><span class="cd-label">Hours</span></div>' +
+  '<div class="cd-box"><span class="cd-number" id="cd-m">--</span><span class="cd-label">Mins</span></div>' +
+  '<div class="cd-box"><span class="cd-number" id="cd-s">--</span><span class="cd-label">Secs</span></div>' +
+  '</div>';
+
+function sgt(date, time) {
+  if (!date || !time) return new Date(0);
+  var dp = date.split('-'), tp = time.split(':');
+  var yr = parseInt(dp[0],10), mo = parseInt(dp[1],10)-1, dy = parseInt(dp[2],10);
+  var hr = parseInt(tp[0],10), mn = parseInt(tp[1],10);
+  return new Date(Date.UTC(yr, mo, dy, hr - 8, mn, 0));
+}
+
+function pad(n) { return (n < 10 ? '0' : '') + n; }
+
+function getStatus(t) {
+  var now = new Date();
+  var s = sgt(t.date, t.start), e = sgt(t.date, t.end);
+  if (now >= s && now <= e) return 'live';
+  if (now > e) return 'past';
+  return 'upcoming';
+}
+
+function updateCards() {
+  var activeList = document.getElementById('activeSessionList');
+  var pastList   = document.getElementById('pastSessionList');
+  if (!activeList || !pastList) return;
+
+  // Use a static array because we'll be moving nodes between containers.
+  var cards = Array.prototype.slice.call(document.querySelectorAll('.session-card'));
+
+  // Sort by start time so Up Next is always the earliest upcoming
+  cards.sort(function(a, b) {
+    var as = sgt(a.getAttribute('data-date'), a.getAttribute('data-start')).getTime();
+    var bs = sgt(b.getAttribute('data-date'), b.getAttribute('data-start')).getTime();
+    return as - bs;
+  });
+
+  var now = new Date();
+  var foundNext = false;
+
+  for (var i = 0; i < cards.length; i++) {
+    var c = cards[i];
+    var s = sgt(c.getAttribute('data-date'), c.getAttribute('data-start'));
+    var e = sgt(c.getAttribute('data-date'), c.getAttribute('data-end'));
+    var tagEl = c.querySelector('.card-tag');
+
+    // reset
+    c.classList.remove('past','next','live');
+    if (tagEl) { tagEl.style.display = 'none'; tagEl.className = 'card-tag'; tagEl.textContent = ''; }
+
+    if (now >= s && now <= e) {
+      // LIVE -> Active
+      activeList.appendChild(c);
+      c.classList.add('live');
+      if (tagEl) {
+        tagEl.style.display = 'inline-block';
+        tagEl.classList.add('tag-live');
+        tagEl.textContent = 'Live Now';
+      }
+    } else if (now > e) {
+      // PAST -> Past
+      pastList.appendChild(c);
+      c.classList.add('past');
+    } else {
+      // UPCOMING -> Active
+      activeList.appendChild(c);
+      if (!foundNext) {
+        foundNext = true;
+        c.classList.add('next');
+        if (tagEl) {
+          tagEl.style.display = 'inline-block';
+          tagEl.classList.add('tag-next');
+          tagEl.textContent = 'Up Next';
+        }
+      }
+    }
+  }
+}
+
+function updateHero() {
+  var nextTalk = null, liveTalk = null;
+  for (var i = 0; i < TALKS.length; i++) {
+    var st = getStatus(TALKS[i]);
+    if (st === 'live' && !liveTalk) liveTalk = TALKS[i];
+    if (st === 'upcoming' && !nextTalk) nextTalk = TALKS[i];
+  }
+  var featured = liveTalk || nextTalk;
+  var titleEl = document.getElementById('heroTitle');
+  var metaEl  = document.getElementById('heroMeta');
+  var cdEl    = document.getElementById('heroCountdown');
+  var labelEl = document.getElementById('heroLabel');
+  if (!titleEl) return;
+
+  if (!featured) {
+    if (labelEl) labelEl.textContent = 'Programme Status';
+    titleEl.textContent = 'Programme Complete';
+    metaEl.textContent = 'All sessions have ended. Well done!';
+    cdEl.innerHTML = '<span class="done-badge">Programme Ended</span>';
+    return;
+  }
+
+  var p = featured.date.split('-');
+  titleEl.textContent = featured.title;
+  metaEl.textContent = featured.day + ', ' + parseInt(p[2],10) + ' ' + MONTHS[parseInt(p[1],10)-1] + ' ' + p[0] + '   |   ' + featured.start + ' - ' + featured.end;
+
+  if (liveTalk) {
+    if (labelEl) labelEl.textContent = 'Ongoing Now';
+    cdEl.innerHTML = '<span class="live-badge">Session In Progress</span>';
+    return;
+  }
+
+  if (labelEl) labelEl.textContent = 'Next Session';
+  var diff = sgt(featured.date, featured.start) - new Date();
+  if (diff <= 0) { updateHero(); updateCards(); return; }
+
+  // Restore countdown row HTML if it was replaced (e.g. after a live session ended)
+  if (!document.getElementById('cd-d')) {
+    cdEl.innerHTML = COUNTDOWN_HTML;
+  }
+
+  var dd = document.getElementById('cd-d');
+  var dh = document.getElementById('cd-h');
+  var dm = document.getElementById('cd-m');
+  var ds = document.getElementById('cd-s');
+  if (dd) dd.textContent = pad(Math.floor(diff / 86400000));
+  if (dh) dh.textContent = pad(Math.floor((diff % 86400000) / 3600000));
+  if (dm) dm.textContent = pad(Math.floor((diff % 3600000) / 60000));
+  if (ds) ds.textContent = pad(Math.floor((diff % 60000) / 1000));
+}
+
+// Run immediately — no DOMContentLoaded, no setTimeout
+// The script tag is at the bottom of body so all elements exist
+updateHero();
+updateCards();
+setInterval(updateHero, 1000);
+setInterval(updateCards, 60000);
+</script>
+</body>
+</html>
+    
